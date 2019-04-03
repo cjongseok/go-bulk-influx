@@ -8,7 +8,7 @@ Examples
 ```go
 import (
     bulk        "github.com/cjongseok/go-bulk-influx"
-	influxdb    "github.com/influxdata/influxdb/client/v2"
+    influxdb    "github.com/influxdata/influxdb/client/v2"
 )
 
 // DB info
@@ -32,17 +32,17 @@ var myFieldTypes = map[string]types.BasicKind{
 bq := utils.NewBulkQuery(ctx, dbClient, dbName, dbPrecision)
 var res []chan []*utils.Series
 for _, t := range myTags {
-	ch := make(chan []*utils.Series)
-	res = append(res, ch)
-	cmd := fmt.Sprintf("select last(my_field) as last_my_field from my_measurement where my_tag=%s order by desc limit 1", t)
-	stmt := utils.Statement{Cmd: cmd, Res: ch, TagTypes: tagTypes, FieldTypes: fieldTypes}
-	bq.Add(stmt)
+    ch := make(chan []*utils.Series)
+    res = append(res, ch)
+    cmd := fmt.Sprintf("select last(my_field) as last_my_field from my_measurement where my_tag='%s' order by desc limit 1", t)
+    stmt := utils.Statement{Cmd: cmd, Res: ch, TagTypes: tagTypes, FieldTypes: fieldTypes}
+    bq.Add(stmt)
 }
 
 // Execute statements
 err = bq.Execute(false)     // disable Google Cloud Tracing
 if err != nil {
-	return
+    return
 }
 
 // Transform results
@@ -52,12 +52,12 @@ type LastValue struct {
 }
 lasts = make([]LastValue, len(myTags))
 for i, resCh := range res {
-	s := <-resCh
-	if len(s) != 1 || len(s[0].Fields) != 1 {
+    s := <-resCh
+    if len(s) != 1 || len(s[0].Fields) != 1 {
     	lasts[i] = LastValue{}
-		continue
-	}
-	lasts[i] = LastValue{
+	continue
+    }
+    lasts[i] = LastValue{
     	Value: s[0].Fields[0]["latest_my_field"].(float64),
     	Timestamp: s[0].Fields[0][bulk.InfluxFieldTime].(int32),
     }
