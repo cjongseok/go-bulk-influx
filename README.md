@@ -5,7 +5,7 @@ Bulk query & write to InfluxDB
 Examples
 ---
 ### Query last (my_field, timestamp) pairs of given tags
-``go
+```go
 import (
     bulk        "github.com/cjongseok/go-bulk-influx"
 	influxdb    "github.com/influxdata/influxdb/client/v2"
@@ -62,4 +62,4 @@ for i, resCh := range res {
     	Timestamp: s[0].Fields[0][bulk.InfluxFieldTime].(int32),
     }
 }
-``
+```
